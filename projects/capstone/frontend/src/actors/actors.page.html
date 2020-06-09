@@ -1,0 +1,69 @@
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-title style="text-align: center">
+        <b>Casting</b> Agency
+      </ion-title>
+
+        <ion-button [href]="loginURL" *ngIf="!auth.token" slot="end">Log In</ion-button>
+        <ion-button (click)="auth.logout()" [routerLink]="['/tabs/actors']" *ngIf="auth.token" slot="end">Log Out</ion-button>
+    </ion-toolbar>
+  </ion-header>
+
+    <ion-content *ngIf="actors && actors.items">
+    <div>
+      <ion-list
+       style="opacity: .7; cursor: pointer;"
+       *ngIf="auth.can('post:create_actors')"
+       (click)="openForm()">
+       <ion-item>
+         <ion-label>Create Actors</ion-label>
+         <ion-icon name="add-circle" slot="end"></ion-icon>
+       </ion-item>
+     </ion-list>
+
+      <ion-list>
+        <ion-item button *ngFor="let actor of Object.keys(actors.items)"  (click)='openForm(actors.items[actor])'>
+            {{actors.items[actor].name}}
+        </ion-item>
+      </ion-list>
+
+        <!-- <ion-card
+         style="align-items:center; min-width:150px; display: flex; flex-direction: column; cursor: pointer;">
+            <ion-card-header>
+              <ion-card-title></ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+                <!-- <app-actor-graphic [actor]="actors.items[actor]"></app-actor-graphic> -->
+
+            <!-- <ion-card-content style="color:grey; font-size: 256%;">
+                <ion-icon name="add-circle"></ion-icon>
+            </ion-card-content>
+          </ion-card> -->
+    </div>
+    </ion-content>
+
+  <!-- List of Input Items -->
+
+
+  <!-- List of Sliding Items -->
+  <!-- <ion-list>
+    <ion-item-sliding>
+      <ion-item>
+        <ion-label>Item</ion-label>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option>Unread</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-item-sliding>
+      <ion-item>
+        <ion-label>Item</ion-label>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option>Unread</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content> -->
