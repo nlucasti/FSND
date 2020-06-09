@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title style="text-align: center">
+      <b>Casting</b> Agency
+    </ion-title>
+
+      <ion-button [href]="loginURL" *ngIf="!auth.token" slot="end">Log In</ion-button>
+      <ion-button (click)="auth.logout()" [routerLink]="['/tabs/movies']" *ngIf="auth.token" slot="end">Log Out</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+  <ion-content *ngIf="movies && movies.items">
+  <div style="display: flex; justify-content: center; padding-top: 20px;">
+      <ion-card
+       style="align-items:center; display: flex; flex-direction: column;"
+       *ngFor="let movie of Object.keys(movies.items)"
+       >
+       <div style="position:relative; display:inline-block;">
+          <ion-icon icon="create-outline" class="img-button" (click)="openForm(movies.items[movie])"></ion-icon>
+         <img src="{{movies.items[movie].img_link}}" alt="ion" class="img-card"  style="cursor:pointer;" (click)="getJoin(casts.items, movies.items); openActors(movies.items[movie])">
+         <!-- <"openActors(casts.items[movie])"> -->
+          <div class="card-title">{{movies.items[movie].title}}</div>
+        </div>
+            <!-- <ion-card-title style="font-size: 16px; font-size: 1vw;">{{movies.items[movie].title}}</ion-card-title> -->
+            <!-- <ion-card-title style="font-size: 16px; font-size: 1vw;">{{movies.items[movie].img_link}}</ion-card-title> -->
+              <!-- <app-movie-graphic [movie]="movies.items[movie]"></app-movie-graphic> -->
+        </ion-card>
+      <ion-card
+       *ngIf="auth.can('post:create_movies')"
+       (click)="openForm()" class="create-card">
+          <ion-card-header>
+            <ion-card-title style="font-size: 2vw;">Create Movie</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content style="color:grey;">
+              <ion-icon name="add-circle" style="height: 3vw; width:3vw;"></ion-icon>
+          </ion-card-content>
+        </ion-card>
+  </div>
+  </ion-content>
