@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title *ngIf="isNew">New Actor Creator</ion-title>
+    <ion-title *ngIf="!isNew">Actor Editor</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="actor">
+    <!-- <app-actor-graphic [actor]="actor"></app-actor-graphic> -->
+
+    <!-- <form (ngSubmit)="logForm()"> -->
+    <form>
+      <ion-item>
+        <ion-label>Actor's Name</ion-label>
+        <ion-input type="text" [(ngModel)]="actor.name" name="name"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Age</ion-label>
+        <ion-input type="text" [(ngModel)]="actor.age" name="age"></ion-input>
+        <!-- <input type="date" id="datePicker" name="release_date" /> -->
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Gender</ion-label>
+        <ion-input type="text" [(ngModel)]="actor.gender" name="gender"></ion-input>
+        <!-- <input type="date" id="datePicker" name="release_date" /> -->
+      </ion-item>
+    </form>
+    <form>
+      <ion-item>
+        <!-- [disabled]="!auth.can('post:create_cast) || !auth.can('post:create_cast)"> -->
+        <ion-label>Movies</ion-label>
+        <ion-select multiple="true"  [(ngModel)]="cast.movie_id" name="movie_id" (click) = "cast.actor_id=actor.id;">
+          <ion-select-option  *ngFor="let movie of Object.keys(movies.items)" value="{{movies.items[movie].id}}" >{{movies.items[movie].title}}</ion-select-option>
+        </ion-select>
+       </ion-item>
+<!-- cast.actor_id=actor.id; testFunc(); -->
+      <ion-button
+        [disabled]="!auth.can('delete:delete_actors')"
+        (click)="deleteClicked()">Delete</ion-button><br />
+      <ion-button (click)="closeModal()">Cancel</ion-button>
+      <ion-button
+        [disabled]="!auth.can('patch:edit_actors') || !auth.can('post:create_actors')"
+        (click)="saveClicked(); testFunc();">Save</ion-button>
+
+    </form>
+</ion-content>

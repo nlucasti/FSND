@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title *ngIf="isNew">New Movie Creator</ion-title>
+    <ion-title *ngIf="!isNew">Movie Editor</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="movie">
+    <!-- <app-movie-graphic [movie]="movie"></app-movie-graphic> -->
+
+    <!-- <form (ngSubmit)="logForm()"> -->
+    <form>
+      <ion-item>
+        <ion-label>Movie Title</ion-label>
+        <ion-input type="text" [(ngModel)]="movie.title" name="title"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Release Date</ion-label>
+        <ion-datetime [(ngModel)]="movie.release_date" name="release_date"></ion-datetime>
+        <!-- <input type="date" id="datePicker" name="release_date" /> -->
+      </ion-item>
+      <ion-item>
+        <ion-label>Image Link</ion-label>
+        <ion-input type="url" [(ngModel)]="movie.img_link" name="img_link"></ion-input>
+        <!-- <input type="date" id="datePicker" name="release_date" /> -->
+      </ion-item>
+
+      <ion-button
+        [disabled]="!auth.can('delete:delete_movies')"
+        (click)="deleteClicked()">Delete</ion-button><br />
+      <ion-button (click)="closeModal()">Cancel</ion-button>
+      <ion-button
+        [disabled]="!auth.can('patch:edit_movies') || !auth.can('post:create_movies')"
+        (click)="saveClicked()">Save</ion-button>
+
+    </form>
+</ion-content>

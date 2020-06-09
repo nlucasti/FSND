@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{movie.title}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="movie">
+    <!-- <app-movie-graphic [movie]="movie"></app-movie-graphic> -->
+
+    <!-- <form (ngSubmit)="logForm()"> -->
+    <img src="{{movie.img_link}}" class="img-card">
+      <ion-item>
+        <ion-label>Release Date:</ion-label>
+        <ion-label slot="end">{{movie.release_date}}</ion-label>
+      </ion-item>
+      <br>
+      <ion-title>Actors</ion-title>
+      <ion-item *ngFor="let cast of movie.cast">
+        <li>{{cast.name}}</li>
+      </ion-item>
+
+
+      <ion-button (click)="closeModal()">Cancel</ion-button>
+
+</ion-content>
