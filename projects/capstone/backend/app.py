@@ -1,13 +1,12 @@
+from dateutil.parser import parse
 import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from database.models import setup_db, db_drop_and_create_all, Movies, Actors, Casts
 import datetime
 from auth.auth import AuthError, requires_auth
-from dateutil.parser import parse
-
-
+from database.models import setup_db, Movies, Actors, Casts
+from database.models import db_drop_and_create_all
 
 
 def create_app(test_config=None):
@@ -19,7 +18,6 @@ def create_app(test_config=None):
     '''
      Use the after_request decorator to set Access-Control-Allow
     '''
-    #db_drop_and_create_all()
 
     @app.after_request
     def after_request(response):
@@ -30,7 +28,6 @@ def create_app(test_config=None):
             'Access-Control-Allow-Methods',
             'GET, POST, PATCH, DELETE, OPTIONS')
         return response
-
 
     @app.route('/actors', methods=['GET'])
     @requires_auth('get:actors')
@@ -71,21 +68,21 @@ def create_app(test_config=None):
 
     @app.route('/actors/<int:id>', methods=['PATCH'])
     @requires_auth('patch:edit_actors')
-    def edit_actors(jwt,id):
+    def edit_actors(jwt, id):
         actor = Actors.query.filter(Actors.id == id).one_or_none()
         if actor:
             try:
                 actor.name = request.get_json()['name']
-            except:
-                pass
+            except KeyError:
+                actor.name = actor.name
             try:
                 actor.age = request.get_json()['age']
-            except:
-                pass
+            except KeyError:
+                actor.age = actor.age
             try:
                 actor.gender = request.get_json()['gender']
-            except:
-                pass
+            except KeyError:
+                actor.gender
             actor.update()
             result = {"success": "True", "actors": actor.format()}
         else:
@@ -96,20 +93,24 @@ def create_app(test_config=None):
     @app.route('/casts', methods=['GET'])
     @requires_auth('get:casts')
     def get_casts(jwt):
-        # casts = db.engine.execute("SELECT * FROM public.\"Casts\" c JOIN public.\"Actors\" a ON c.actor_id=a.id")
         try:
-            casts = db.session.query(Casts.actor_id, Casts.id, Casts.movie_id, Actors.name, Actors.age, Actors.gender).join(Actors).all()
+            casts = db.session.query(Casts.actor_id,
+                                     Casts.id,
+                                     Casts.movie_id,
+                                     Actors.name,
+                                     Actors.age,
+                                     Actors.gender).join(Actors).all()
             # do something with the session
-        except:                   # * see comment below
+        except SQLAlchemyError:
             db.session.rollback()
         else:
             db.session.commit()
-            records=[]
+            records = []
             for x in casts:
                 data = {
                     "actor_id": x.actor_id,
                     "id": x.id,
-                    "movie_id":x.movie_id,
+                    "movie_id": x.movie_id,
                     'name': x.name,
                     'age': x.age,
                     'gender': x.gender
@@ -118,9 +119,6 @@ def create_app(test_config=None):
 
             result = {"success": "True", "casts": records}
             return jsonify(result)
-        #casts = Casts.query.join(Actors).all()
-        # for x in casts:
-        #     print(x)
         result = {"success": "False", "casts": []}
         return jsonify(result)
 
@@ -143,38 +141,35 @@ def create_app(test_config=None):
         actor_id = request.get_json()['actor_id']
         records = []
         for m in movie_id:
-            cast = Casts(
-            movie_id=m,
-            actor_id=actor_id)
+            cast = Casts(movie_id=m, actor_id=actor_id)
             if cast:
                 cast.insert()
             else:
                 abort(404)
             records.append(cast)
-        result = {"success": "True", "casts": [cast.format() for cast in records]}
+        result = {"success": "True",
+                  "casts": [cast.format() for cast in records]}
         return jsonify(result)
-
 
     @app.route('/casts/<int:id>', methods=['PATCH'])
     @requires_auth('patch:edit_casts')
-    def edit_casts(jwt,id):
+    def edit_casts(jwt, id):
         cast = Casts.query.filter(Casts.id == id).one_or_none()
         if cast:
             try:
                 cast.movie_id = request.get_json()['movie_id']
-            except:
+            except KeyError:
                 pass
             try:
                 cast.actor_id = request.get_json()['actor_id']
-            except:
+            except KeyError:
                 pass
             cast.update()
             result = {"success": "True", "casts": cast.format()}
         else:
             abort(404)
         return jsonify(result)
-#####
-#####
+
     @app.route('/movies', methods=['GET'])
     @requires_auth('get:movies')
     def get_movies(jwt):
@@ -184,7 +179,7 @@ def create_app(test_config=None):
 
     @app.route('/movies/<int:id>', methods=['DELETE'])
     @requires_auth('delete:delete_movies')
-    def delete_movies(jwt,id):
+    def delete_movies(jwt, id):
         movie = Movies.query.filter(Movies.id == id).one_or_none()
 
         if movie:
@@ -200,12 +195,10 @@ def create_app(test_config=None):
         title = request.get_json()['title']
         release_date = request.get_json()['release_date']
         img_link = request.get_json()['img_link']
-        #actors = request.get_json()['actors']
         movie = Movies(
             title=title,
             release_date=parse(release_date),
             img_link=img_link)
-            #actors = actors)#datetime.datetime.strptime(release_date,"%Y-%m-%dT%H:%M:%S.%fZ"))
         if movie:
             movie.insert()
             result = {"success": "True", "movies": movie.format()}
@@ -215,20 +208,20 @@ def create_app(test_config=None):
 
     @app.route('/movies/<int:id>', methods=['PATCH'])
     @requires_auth('patch:edit_movies')
-    def edit_movies(jwt,id):
+    def edit_movies(jwt, id):
         movie = Movies.query.filter(Movies.id == id).one_or_none()
         if movie:
             try:
                 movie.title = request.get_json()['title']
-            except:
+            except KeyError:
                 pass
             try:
                 movie.release_date = parse(request.get_json()['release_date'])
-            except:
+            except KeyError:
                 pass
             try:
                 movie.img_link = request.get_json()['img_link']
-            except:
+            except KeyError:
                 pass
             movie.update()
             result = {"success": "True", "movies": movie.format()}
@@ -285,6 +278,7 @@ def create_app(test_config=None):
             "message": "Bad Request"
         }), 400
     return app
+
 
 app = create_app()
 
