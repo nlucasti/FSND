@@ -2,7 +2,7 @@
 
 ## Casting Agency
 
-This webapp allows a user to match actors with movies.
+This webapp allows a user to match actors with movies. The motivation for this work was to demonstrate a pythonic backend, relational databases, REST, and frontend web development using AngularJS-based frameworks.
 
 The frontend provides a single page web app powered by the ionic framework and angularjs. This allows it to be both interactive and portable to mobile devices.
 
@@ -44,7 +44,98 @@ To start the server, run the following command:
 ```bash
 python app.py
 ```
+The endpoints are as shown below:
 
+`GET \movies`
+This endpoint gets all the movies from the db.
+
+`GET \actors`
+This endpoint gets all the actors from the db.
+
+`GET \casts`
+This endpoint gets all the casts from the db.
+
+`POST \movies`
+```
+request:
+{
+    "title": [TITLE],
+    "release_date": [RELEASE_DATE],
+    "img_link": [IMG_LINK]
+}
+```
+
+This endpoint posts a new movie to the db.
+
+`POST \actors`
+```
+request:
+{
+    "name": [NAME],
+    "age": [AGE],
+    "gender": [GENDER]
+}
+```
+
+This endpoint posts a new actor to the db.
+
+`POST \casts`
+```
+request:
+{
+    "movie_id": [MOVIE_ID],
+    "actor_id": [ACTOR_ID]
+}
+```
+
+This endpoint posts a new cast to the db.
+
+`PATCH \movies\<movie id>`
+```
+request:
+{
+    "title": [TITLE],
+    "release_date": [RELEASE_DATE],
+    "img_link": [IMG_LINK]
+}
+```
+
+This endpoint patches a movie in the db.
+
+`PATCH \actors\<actor id>`
+```
+request:
+{
+    "name": [NAME],
+    "age": [AGE],
+    "gender": [GENDER]
+}
+```
+
+This endpoint patches an actor in the db.
+
+`PATCH \casts\<cast id>`
+```
+request:
+{
+    "movie_id": [MOVIE_ID],
+    "actor_id": [ACTOR_ID]
+}
+```
+
+This endpoint patches a cast in the db.
+
+`DELETE \movies\<movie id>`
+
+This endpoint deletes a movie from the db.
+
+`DELETE \actors\<actor id>`
+
+This endpoint deletes an actor from the db.
+
+`DELETE \casts\<cast id>`
+
+This endpoint deletes a cast from the db.
 
 ### Frontend
 
@@ -61,3 +152,21 @@ To start the server, run the following command:
 ```bash
 ionic start
 ```
+
+
+### Heroku
+
+The application is hosted on Heroku. The links are as follows:
+
+Frontend:https://fsnd-casting-frontend.herokuapp.com/
+Backend: https://fsnd-casting-app.herokuapp.com/
+
+To test the program on Heroku, you can use the provided Postman collection, or test the endpoints using curl, which I will not explore here.
+
+A program `test_app.py` was written to provide unittests for each endpoint and error behavior. It can either be run locally, or run on the Heroku server by using the following command:
+
+```bash
+heroku run python test_app.py --app fsnd-casting-app
+```
+
+It must be noted that a valid Heroku login with app permissions is required to run the program in this manner.
